@@ -3,26 +3,170 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Live Channel Player</title>
+<title>Live Sports Channels</title>
 <script src="https://content.jwplatform.com/libraries/SAHhwvZq.js"></script>
+
 <style>
-body { margin:0; background:#000; display:flex; justify-content:center; align-items:center; height:100vh; }
-#jwPlayer { width:100%; max-width:960px; height:540px; border-radius:10px; }
+body {
+  margin:0;
+  background:#0d1117;
+  font-family: Arial, sans-serif;
+  color:white;
+}
+
+.header {
+  text-align:center;
+  font-size:24px;
+  font-weight:bold;
+  padding:15px;
+  background: linear-gradient(90deg,#008000,#00c853);
+}
+
+.channels-grid {
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+  gap:15px;
+  padding:15px;
+}
+
+.channel-card {
+  background:#1a1a1a;
+  border-radius:15px;
+  padding:10px;
+  text-align:center;
+  cursor:pointer;
+  transition:.3s;
+  box-shadow:0 0 10px rgba(0,255,0,0.3);
+}
+
+.channel-card:hover {
+  transform:translateY(-5px);
+  background:#00c853;
+}
+
+.channel-card img {
+  width:80px;
+  height:80px;
+  object-fit:contain;
+  margin-bottom:8px;
+  border-radius:8px;
+}
+
+.channel-card div {
+  font-weight:bold;
+  font-size:16px;
+}
+
+.player-section {
+  display:none;
+  padding:20px;
+  text-align:center;
+}
+
+#jwPlayer {
+  width:100%;
+  max-width:960px;
+  height:540px;
+  border-radius:12px;
+  overflow:hidden;
+  margin:auto;
+}
+
+.back-btn {
+  margin-top:15px;
+  padding:10px 20px;
+  background:#008000;
+  color:white;
+  border:none;
+  border-radius:10px;
+  cursor:pointer;
+  font-weight:bold;
+}
+.back-btn:hover { background:#00c853; }
 </style>
 </head>
 <body>
 
-<div id="jwPlayer"></div>
+<div class="header">Live Sports Channels</div>
+
+<div id="channelsContainer" class="channels-grid"></div>
+
+<div class="player-section" id="playerSection">
+  <div id="jwPlayer"></div>
+  <button class="back-btn" id="backBtn">← Back to Channels</button>
+</div>
 
 <script>
-jwplayer("jwPlayer").setup({
-  file: "https://plu002.timeout1.top:8088/live/webcricwillow/playlist.m3u8?id=120375&pk=36927a9313532afdd60fd8ad5ec970527fe3855c82059a151e3c5f92bec31a449cfba1e9a93644eee96483d2509b47beef71b4e51b948a427beccd942d23e299",
-  width: "100%",
-  height: "100%",
-  autostart: true,
-  title: "Live Channel",
-  skin: { name:"glow" }
-});
+const channels = [
+  {
+    name: "PTV Sports",
+    logo: "https://i.imgur.com/CPm6GHA.png",
+    url: "https://tx4.timeout1.top:8088/mobile/stream9_160p/playlist.m3u8?id=33&pk=36927a9313532afdd60fd8ad5ec970527fe3855c82059a151e3c5f92bec31a44b4b7d62235e82a9cd9812e2ff75da1a6ab2ae82b7fe36f8dea9d5be8736e295e"
+  },
+  {
+    name: "Sky Sports",
+    logo: "https://i.imgur.com/J74SMxj.png",
+    url: "https://tx4.timeout1.top:8088/mobile/stream8_160p/playlist.m3u8?id=29&pk=36927a9313532afdd60fd8ad5ec970527fe3855c82059a151e3c5f92bec31a44b4b7d62235e82a9cd9812e2ff75da1a6ab2ae82b7fe36f8dea9d5be8736e295e"
+  },
+  {
+    name: "Willow Hindi 2",
+    logo: "https://i.postimg.cc/CLNyCkV2/willow-blue-logo-362ed8e.png",
+    url: "https://tx4.timeout1.top:8088/mobile/stream6_240p/playlist.m3u8?id=22&pk=36927a9313532afdd60fd8ad5ec970527fe3855c82059a151e3c5f92bec31a44b4b7d62235e82a9cd9812e2ff75da1a6ab2ae82b7fe36f8dea9d5be8736e295e"
+  },
+  {
+    name: "Star Sports 2",
+    logo: "https://i.postimg.cc/kGL2fz8B/image.png",
+    url: "https://tx4.timeout1.top:8088/mobile/stream7_240p/playlist.m3u8?id=26&pk=36927a9313532afdd60fd8ad5ec970527fe3855c82059a151e3c5f92bec31a44b4b7d62235e82a9cd9812e2ff75da1a6ab2ae82b7fe36f8dea9d5be8736e295e"
+  },
+  {
+    name: "Willow English",
+    logo: "https://i.postimg.cc/CLNyCkV2/willow-blue-logo-362ed8e.png",
+    url: "https://tx4.timeout1.top:8088/mobile/stream1_240p/playlist.m3u8?id=2&pk=36927a9313532afdd60fd8ad5ec970527fe3855c82059a151e3c5f92bec31a44b4b7d62235e82a9cd9812e2ff75da1a6ab2ae82b7fe36f8dea9d5be8736e295e"
+  }
+];
+
+const container = document.getElementById("channelsContainer");
+const playerSection = document.getElementById("playerSection");
+const backBtn = document.getElementById("backBtn");
+
+var jwPlayerInstance = jwplayer("jwPlayer");
+
+// Render channel cards
+function renderChannels() {
+  container.innerHTML = "";
+  channels.forEach(ch => {
+    const div = document.createElement("div");
+    div.className = "channel-card";
+    div.innerHTML = `<img src="${ch.logo}" alt="${ch.name}"><div>${ch.name}</div>`;
+    div.onclick = () => playChannel(ch);
+    container.appendChild(div);
+  });
+}
+
+// Play selected channel
+function playChannel(ch){
+  container.style.display = "none";
+  playerSection.style.display = "block";
+  jwPlayerInstance.setup({
+    file: ch.url,
+    width: "100%",
+    height: "100%",
+    autostart: true,
+    title: ch.name,
+    image: ch.logo,
+    skin: { name: "glow" }
+  });
+}
+
+// Back to channel list
+backBtn.onclick = () => {
+  playerSection.style.display = "none";
+  container.style.display = "grid";
+  jwPlayerInstance.stop();
+}
+
+// Initialize
+renderChannels();
 </script>
 
 </body>
