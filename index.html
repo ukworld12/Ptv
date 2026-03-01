@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Live Channel Player</title>
+<script src="https://content.jwplatform.com/libraries/SAHhwvZq.js"></script>
+<style>
+body { margin:0; background:#000; display:flex; justify-content:center; align-items:center; height:100vh; }
+#jwPlayer { width:100%; max-width:960px; height:540px; border-radius:10px; }
+</style>
+</head>
+<body>
+
+<div id="jwPlayer"></div>
+
+<script>
+jwplayer("jwPlayer").setup({
+  file: "https://plu002.timeout1.top:8088/live/webcricwillow/playlist.m3u8?id=120375&pk=36927a9313532afdd60fd8ad5ec970527fe3855c82059a151e3c5f92bec31a449cfba1e9a93644eee96483d2509b47beef71b4e51b948a427beccd942d23e299",
+  width: "100%",
+  height: "100%",
+  autostart: true,
+  title: "Live Channel",
+  skin: { name:"glow" }
+});
+</script>
+
+</body>
+</html>
